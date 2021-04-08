@@ -1,4 +1,8 @@
 assetmanager
+Makefile
 new_build
 saved_inventory.txt
 saved_squadrons.txt
+*.o
+moc*
+ui*
