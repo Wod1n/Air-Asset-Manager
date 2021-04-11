@@ -3,6 +3,7 @@ QT += widgets
 HEADERS     = mainWindow.h \
               squadronsDialog.h \
               aircraftDialog.h \
+              editDialog.h \
               transferDialog.h \
               dependencies/headers/aircraft.h \
               dependencies/headers/location.h \
@@ -13,11 +14,13 @@ HEADERS     = mainWindow.h \
 FORMS       = mainWindow.ui \
               squadronsDialog.ui \
               aircraftDialog.ui \
+              editDialog.ui \
               transferDialog.ui
 
 SOURCES     = mainWindow.cpp \
               squadronsDialog.cpp \
               aircraftDialog.cpp \
+              editDialog.cpp \
               transferDialog.cpp \
               dependencies/aircraft.cpp \
               dependencies/location.cpp \

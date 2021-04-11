@@ -36,26 +36,86 @@ void Inventory::addAircraft(){
 void Inventory::addAircraft(Aircraft* new_aircraft){
   embarkedAircraft.push_back(*new_aircraft);
   switch(new_aircraft->getRegionCode()) {
+    case 0:{
+      fdlist.push_back(embarkedAircraft.size()-1);
+      break;
+    }
+
     case 1:{
       hangarlist.push_back(embarkedAircraft.size()-1);
       break;
     }
 
     case 2:{
-      fdlist.push_back(embarkedAircraft.size()-1);
-      break;
-    }
-
-    case 3:{
       onmission.push_back(embarkedAircraft.size()-1);
       break;
     }
 
-    case 4:{
+    case 3:{
       transitlist.push_back(embarkedAircraft.size()-1);
       break;
     }
   }
+}
+
+void Inventory::editAircraft(int i, bool stowed, int type, int squadron, int fuelLevel){
+  embarkedAircraft.at(i).editAircraft(stowed, type, squadron, fuelLevel);
+}
+
+void Inventory::removeAircraft(int activeIndex){
+  int forDeletion = -1;
+  for(int i=0; i<fdlist.size(); i++){
+    if(activeIndex == fdlist.at(i)){
+      forDeletion = i;
+    }
+    else if(activeIndex < fdlist.at(i)){
+      fdlist.at(i)--;
+    }
+  }
+  if(forDeletion != -1){
+    fdlist.erase(fdlist.begin()+forDeletion);
+  }
+
+  forDeletion = -1;
+  for(int i=0; i<hangarlist.size(); i++){
+    if(activeIndex == hangarlist.at(i)){
+      forDeletion = i;
+    }
+    else if(activeIndex < hangarlist.at(i)){
+      hangarlist.at(i)--;
+    }
+  }
+  if(forDeletion != -1){
+    hangarlist.erase(hangarlist.begin()+forDeletion);
+  }
+
+  forDeletion = -1;
+  for(int i=0; i<onmission.size(); i++){
+    if(activeIndex == onmission.at(i)){
+      forDeletion = i;
+    }
+    else if(activeIndex < onmission.at(i)){
+      onmission.at(i)--;
+    }
+  }
+  if(forDeletion != -1){
+    onmission.erase(onmission.begin()+forDeletion);
+  }
+
+  forDeletion = -1;
+  for(int i=0; i<transitlist.size(); i++){
+    if(activeIndex == transitlist.at(i)){
+      forDeletion = i;
+    }
+    else if(activeIndex < transitlist.at(i)){
+      transitlist.at(i)--;
+    }
+  }
+  if(forDeletion != -1){
+    transitlist.erase(transitlist.begin()+forDeletion);
+  }
+
+  embarkedAircraft.erase(embarkedAircraft.begin()+activeIndex);
 }
 
 std::string Inventory::viewSquadrons(){
@@ -235,6 +295,19 @@ int Inventory::searchAircraft(std::string searchNumber, int searchRegion, bool r
       break;
     }
 
+    case 2:{
+      std::cout << "Searching Mission\n";
+      for(int i=0; i < onmission.size(); i++){
+        if(embarkedAircraft.at(onmission.at(i)).getNumber() == searchNumber){
+          if(returnRegion){
+            return i;
+          }
+          return onmission.at(i);
+        }
+      }
+      break;
+    }
+
     case 3:{
       std::cout << "Searching Transit\n";
       for(int i=0; i < transitlist.size(); i++){
@@ -247,6 +320,15 @@ int Inventory::searchAircraft(std::string searchNumber, int searchRegion, bool r
         }
       }
       break;
+    }
+
+    default:{
+      std::cout << "Searching All\n";
+      for(int i=0; i < embarkedAircraft.size(); i++){
+        if(embarkedAircraft.at(i).getNumber() == searchNumber){
+          return i;
+        }
+      }
     }
   }
 }

@@ -17,12 +17,16 @@ public:
   explicit MainWindow(QMainWindow *parent = nullptr);
   void loadInventory();
   void addShape(int, int, bool, std::string, int=100, int=0);
-  void setActive(std::string, std::string, int);
+  void setActive(std::string, std::string, std::string, int);
   ~MainWindow();
 public slots:
   void addAircraft();
+  void editAircraft();
+  void removeAircraft();
   void transferAircraft();
+  void viewSquadrons();
   void setActiveHanger();
+  void setActiveMission();
   void setActiveTransit();
 private:
   Ui::MainWindow ui;

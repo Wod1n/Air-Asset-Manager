@@ -15,13 +15,16 @@ class Aircraft{
 
   public:
     Aircraft();
+    Aircraft(int, std::string, int, bool, int);
     Aircraft(int, std::string, int, bool, int, Location);
+    void editAircraft(bool, int, int, int);
     void setRegion(int newRegion);
     void setLocation(int, std::string);
     void setLocation(int, int, int);
     bool getStowed();
     int getRegionCode();
     int getTypeCode();
+    int getSquadronCode();
     int getLeft();
     int getTop();
     int getFuel();

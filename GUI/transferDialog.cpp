@@ -1,4 +1,4 @@
- #include "transferDialog.h"
+#include "transferDialog.h"
 
 TransferDialog::TransferDialog(QDialog *parent) : QDialog(parent){
     ui.setupUi(this);

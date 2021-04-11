@@ -116,17 +116,24 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QProgressBar" name="fuelLevel">
-       <property name="value">
-        <number>42</number>
+     <item row="5" column="0">
+      <widget class="QPushButton" name="transferButton">
+       <property name="text">
+        <string>Transfer</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0" alignment="Qt::AlignHCenter">
+     <item row="3" column="0" alignment="Qt::AlignHCenter">
       <widget class="QLabel" name="type">
        <property name="text">
         <string>Type</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QProgressBar" name="fuelLevel">
+       <property name="value">
+        <number>42</number>
        </property>
       </widget>
      </item>
@@ -137,10 +144,10 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QPushButton" name="transferButton">
+     <item row="2" column="0" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="squadron">
        <property name="text">
-        <string>Transfer</string>
+        <string>Squadron</string>
        </property>
       </widget>
      </item>
@@ -161,6 +168,7 @@
      <string>File</string>
     </property>
     <addaction name="actionaddAircraft"/>
+    <addaction name="actioneditAircraft"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -194,6 +202,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionaddAircraft"/>
+   <addaction name="actioneditAircraft"/>
+   <addaction name="actionremoveAircraft"/>
    <addaction name="actionviewSquadrons"/>
   </widget>
   <action name="actionaddAircraft">
@@ -204,6 +214,16 @@
   <action name="actionviewSquadrons">
    <property name="text">
     <string>View Squadrons</string>
+   </property>
+  </action>
+  <action name="actioneditAircraft">
+   <property name="text">
+    <string>Edit Aircraft</string>
+   </property>
+  </action>
+  <action name="actionremoveAircraft">
+   <property name="text">
+    <string>Remove Aircraft</string>
    </property>
   </action>
  </widget>
@@ -257,11 +277,79 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>missionList</sender>
+   <signal>itemClicked(QListWidgetItem*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setActiveMission()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>651</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>786</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionviewSquadrons</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>viewSquadrons()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actioneditAircraft</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>editAircraft()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionremoveAircraft</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>removeAircraft()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>addAircraft()</slot>
   <slot>transferAircraft()</slot>
   <slot>setActiveHanger()</slot>
   <slot>setActiveTransit()</slot>
+  <slot>setActiveMission()</slot>
+  <slot>viewSquadrons()</slot>
+  <slot>editAircraft()</slot>
+  <slot>removeAircraft()</slot>
  </slots>
 </ui>

@@ -17,6 +17,13 @@ void Aircraft::setLocation(int region, int left, int top){
   currentLocation.setLocation(region, left, top);
 }
 
+void Aircraft::editAircraft(bool newStowed, int newType, int newSquadron, int newfuelLevel){
+  stowed = newStowed;
+  type = newType;
+  squadron = newSquadron;
+  fuelLevel = newfuelLevel;
+}
+
 bool Aircraft::getStowed(){
   return stowed;
 }
@@ -31,6 +38,10 @@ int Aircraft::getRegionCode(){
 
 int Aircraft::getTypeCode(){
   return type;
+}
+
+int Aircraft::getSquadronCode(){
+  return squadron;
 }
 
 int Aircraft::getLeft(){
@@ -139,6 +150,14 @@ Aircraft::Aircraft(){
   std::cout << "Input Fuel Level: ";
   std::cin >> fuelLevel;
 };
+
+Aircraft::Aircraft(int imType, std::string imSerialNumber, int imSquadron, bool imStowed, int imFuel){
+  type = imType;
+  serialNumber = imSerialNumber;
+  squadron = imSquadron;
+  stowed = imStowed;
+  fuelLevel = imFuel;
+}
 
 Aircraft::Aircraft(int imType, std::string imSerialNumber, int imSquadron, bool imStowed, int imFuel, Location imLocation){
   type = imType;

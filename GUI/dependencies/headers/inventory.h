@@ -19,7 +19,8 @@ class Inventory{
   public:
     void addAircraft();
     void addAircraft(Aircraft*);
-    void removeAircraft();
+    void editAircraft(int, bool, int, int, int);
+    void removeAircraft(int);
     void transferAircraft(int, int, int=3);
     void setLocation(int, int, int, int);
     int getACNumber();
