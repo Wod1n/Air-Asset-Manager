@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <ctime>
 
 #include "headers/aircraft.h"
 #include "headers/inventory.h"
@@ -186,32 +187,35 @@ void Inventory::transferAircraft(int aircraftIndex, int initialRegion, int final
 
   int transfer{};
   std::string message{};
+  std::time_t now = std::time(0);
+  std::tm* currentTime = std::localtime(&now);
+  std::string time = std::to_string(currentTime->tm_hour) + ":" + std::to_string(currentTime->tm_min);
 
   switch(initialRegion){
     case 0:{
       transfer = fdlist.at(aircraftIndex);
-      message += "<Time> Aircraft " + embarkedAircraft.at(transfer).getNumber() + " from Flight Deck ";
+      message += time + " Aircraft " + embarkedAircraft.at(transfer).getNumber() + " from Flight Deck ";
       fdlist.erase(fdlist.begin()+aircraftIndex);
       break;
     }
 
     case 1:{
       transfer = hangarlist.at(aircraftIndex);
-      message += "<Time> Aircraft " + embarkedAircraft.at(transfer).getNumber() + " from Hangar ";
+      message += time + " Aircraft " + embarkedAircraft.at(transfer).getNumber() + " from Hangar ";
       hangarlist.erase(hangarlist.begin()+aircraftIndex);
       break;
     }
 
     case 2:{
       transfer = onmission.at(aircraftIndex);
-      message += "<Time> Aircraft " + embarkedAircraft.at(transfer).getNumber() + " from Deployment ";
+      message += time + " Aircraft " + embarkedAircraft.at(transfer).getNumber() + " from Deployment ";
       onmission.erase(onmission.begin()+aircraftIndex);
       break;
     }
 
     case 3:{
       transfer = transitlist.at(aircraftIndex);
-      message += "<Time> Aircraft " + embarkedAircraft.at(transfer).getNumber() + " from Transit ";
+      message += time + " Aircraft " + embarkedAircraft.at(transfer).getNumber() + " from Transit ";
       transitlist.erase(transitlist.begin()+aircraftIndex);
       break;
     }
@@ -257,7 +261,7 @@ void Inventory::setLocation(int region, int index, int left, int top){
     }
 
     case 1:{
-      embarkedAircraft.at(hangarlist.at(index)).setLocation(region, left, top);
+      embarkedAircraft.at(index).setLocation(region, left, top);
       break;
     }
   }

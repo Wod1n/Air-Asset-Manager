@@ -16,7 +16,7 @@ Q_OBJECT
 public:
   explicit MainWindow(QMainWindow *parent = nullptr);
   void loadInventory();
-  void addShape(int, int, bool, std::string, int=100, int=0);
+  void addShape(int, int, bool, std::string, int=0, int=0);
   void setActive(std::string, std::string, std::string, int);
   ~MainWindow();
 public slots:
@@ -31,6 +31,7 @@ public slots:
 private:
   Ui::MainWindow ui;
   QGraphicsScene* hangerScene;
+  QGraphicsScene* fdScene;
   QGraphicsRectItem* rectangle;
 
   std::vector<Diagram> hangerAircraft;

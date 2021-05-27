@@ -19,7 +19,9 @@ MainWindow::MainWindow(QMainWindow *parent) : QMainWindow(parent){
   embarked = new Inventory;
 
   hangerScene = new QGraphicsScene(this);
+  //hangerScene->setSceneRect(0,0,200,80);
   ui.hangerView->setScene(hangerScene);
+  //ui.hangerView->scale(0.25,0.25);
 
   QObject::connect(hangerScene, SIGNAL(selectionChanged()), this, SLOT(setActiveHanger()));
 
@@ -154,12 +156,12 @@ void MainWindow::transferAircraft(){
     if(dialog->exec()){
       std::cout << dialog->getNewRegion() << std::endl;
       newRegion = dialog->getNewRegion();
+      embarked->transferAircraft(activeTransfer, 3, newRegion);
+      delete ui.transitList->selectedItems().takeAt(0);
+      addShape(newRegion, type, stowed, activeSerial);
+      ui.transitList->clearSelection();
     }
     delete dialog;
-    embarked->transferAircraft(activeTransfer, 3, newRegion);
-    delete ui.transitList->selectedItems().takeAt(0);
-    addShape(newRegion, type, stowed, activeSerial);
-    ui.transitList->clearSelection();
     return;
   }
 }
@@ -178,7 +180,12 @@ void MainWindow::setActiveHanger(){
 
   //QList<QGraphicsWidget*> allWidgets = hangerScene->findChildren<QGraphicsWidget*>();
 
-  for(int i=1 ; i<hangerScene->items().size(); i+=2){
+  for(int i=0; i<hangerScene->items().size(); i++){
+    std::cout << hangerScene->items().at(i)->scenePos().x() << " " << hangerScene->items().at(i)->scenePos().y() << std::endl;
+    std::cout << hangerScene->items().at(i)->isWidget() << std::endl;
+  }
+
+  for(int i=1; i<hangerScene->items().size(); i+=2){
     if(hangerScene->items().at(i)->isSelected()){
       std::cout << "SELECTED\n";
       std::cout << hangerScene->items().at(i-1)->isWidget() << std::endl;
@@ -189,6 +196,8 @@ void MainWindow::setActiveHanger(){
       int activeIndex = embarked->searchAircraft(activeSerial, 1);
       Aircraft* activeAircraft = embarked->getAircraft(activeIndex);
       setActive(activeSerial, activeAircraft->getType(), activeAircraft->getSquadron(), activeAircraft->getFuel());
+      std::cout << hangerScene->items().at(i)->scenePos().x() << std::endl;
+      std::cout << hangerScene->items().at(i)->scenePos().y() << std::endl;
       ui.missionList->clearSelection();
       ui.transitList->clearSelection();
       return;
@@ -293,7 +302,7 @@ void MainWindow::addShape(int region, int type, bool stowed, std::string serial,
       proxy->setObjectName(serial.c_str());
 
       QGraphicsRectItem* const proxyControl = hangerScene->addRect(left, top, tempWidth, 10, QPen(Qt::black), QBrush(Qt::red));
-      std::cout << tempWidth << std::endl;
+      std::cout << left << " " << top << std::endl;
       proxyControl->setFlag(QGraphicsItem::ItemIsMovable, true);
       proxyControl->setFlag(QGraphicsItem::ItemIsSelectable, true);
       proxy->setPos(left, top+proxyControl->rect().height());
@@ -334,6 +343,10 @@ void MainWindow::viewSquadrons(){
 
 MainWindow::~MainWindow(){
   for(int i=0 ; i<hangerScene->items().size(); i+=2){
+    QGraphicsObject* active = hangerScene->items().at(i)->toGraphicsObject();
+    std::string activeSerial = active->objectName().toStdString();
+    std::cout << activeSerial << std::endl;
+    int activeIndex = embarked->searchAircraft(activeSerial, 1);
     std::cout << hangerScene->items().at(i)->scenePos().x() << std::endl;
     std::cout << hangerScene->items().at(i)->scenePos().y() << std::endl;
 
@@ -341,7 +354,7 @@ MainWindow::~MainWindow(){
     int top = hangerScene->items().at(i)->scenePos().y();
     std::cout << (i-1)/2 << std::endl;
 
-    embarked->setLocation(1, ((i-1)/2), left, top);
+    embarked->setLocation(1, activeIndex, left, top);
   }
   delete embarked;
 }
