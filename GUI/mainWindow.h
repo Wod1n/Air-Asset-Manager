@@ -6,6 +6,7 @@
 #include <QGraphicsRectItem>
 #include <QObject>
 
+#include "dependencies/headers/aircraft.h"
 #include "dependencies/headers/inventory.h"
 #include "dependencies/headers/diagram.h"
 
@@ -16,15 +17,18 @@ Q_OBJECT
 public:
   explicit MainWindow(QMainWindow *parent = nullptr);
   void loadInventory();
-  void addShape(int, int, bool, std::string, int=0, int=0);
+  void addShape(Aircraft*, int=0, int=0, int=0);
   void setActive(std::string, std::string, std::string, int);
   ~MainWindow();
 public slots:
   void addAircraft();
+  void arrived();
   void editAircraft();
   void removeAircraft();
+  void rotateAircraft();
   void transferAircraft();
   void viewSquadrons();
+  void setActiveFD();
   void setActiveHanger();
   void setActiveMission();
   void setActiveTransit();

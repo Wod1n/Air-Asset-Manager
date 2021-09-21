@@ -19,6 +19,7 @@ class Aircraft{
     Aircraft(int, std::string, int, bool, int, Location);
     void editAircraft(bool, int, int, int);
     void setRegion(int newRegion);
+    void setRotation(int);
     void setLocation(int, std::string);
     void setLocation(int, int, int);
     bool getStowed();
@@ -27,6 +28,7 @@ class Aircraft{
     int getSquadronCode();
     int getLeft();
     int getTop();
+    int getRotation();
     int getFuel();
     std::string getNumber();
     std::string getRegion();

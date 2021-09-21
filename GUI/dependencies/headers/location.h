@@ -7,6 +7,7 @@ class Location{
   private:
     int left{0};
     int top{0};
+    int rotation{0};
     int region;
     int fly{-1};
     std::string spot{"Z"};
@@ -15,10 +16,12 @@ class Location{
     int getHeight();
     int getLeft();
     int getTop();
+    int getRotation();
     int getRegionCode();
     void setRegion(int newRegion);
     void setLocation(int, std::string);
     void setLocation(int, int, int);
+    void setRotation(int);
     std::string getLocation();
     std::string getRegion();
     std::string getSpot();
@@ -26,7 +29,7 @@ class Location{
 
     Location();
     Location(int, int, char);
-    Location(int, int, int);
+    Location(int, int, int, int);
 };
 
 #endif

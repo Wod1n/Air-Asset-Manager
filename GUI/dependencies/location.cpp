@@ -17,12 +17,20 @@ void Location::setLocation(int newRegion, int newLeft, int newTop){
   top = newTop;
 }
 
+void Location::setRotation(int newRotation){
+  rotation = newRotation;
+}
+
 int Location::getLeft(){
   return left;
 }
 
 int Location::getTop(){
   return top;
+}
+
+int Location::getRotation(){
+  return rotation;
 }
 
 std::string Location::getLocation(){
@@ -126,7 +134,7 @@ int Location::getRegionCode(){
 std::string Location::saveData(){
   std::string outputString{};
   outputString += std::to_string(region);
-  outputString += " " + std::to_string(left) + " " + std::to_string(top);
+  outputString += " " + std::to_string(left) + " " + std::to_string(top) + " " + std::to_string(rotation);
   return outputString;
 }
 
@@ -160,8 +168,9 @@ Location::Location(int imRegion, int imFly, char imSpot){
   spot = imSpot;
 }
 
-Location::Location(int imRegion, int imLeft, int imTop){
+Location::Location(int imRegion, int imLeft, int imTop, int imRotation){
   region = imRegion;
   left = imLeft;
   top = imTop;
+  rotation = imRotation;
 }

@@ -17,10 +17,6 @@ int TransferDialog::getNewRegion(){
     return 2;
   }
 
-  else if(ui.itButton->isChecked()){
-    return 3;
-  }
-
   else{
     return -1;
   }

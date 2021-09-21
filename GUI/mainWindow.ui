@@ -7,108 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>526</height>
+    <height>530</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="gridLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>210</y>
-      <width>400</width>
-      <height>160</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="hangerSizer">
-     <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignTop">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Hanger</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QGraphicsView" name="hangerView"/>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="gridLayoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>50</y>
-      <width>400</width>
-      <height>160</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="fdSizer">
-     <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignTop">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Flight Deck</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QGraphicsView" name="fdView"/>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>520</x>
-      <y>50</y>
-      <width>211</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="onMission">
-     <item alignment="Qt::AlignHCenter|Qt::AlignTop">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>On Mission</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QListWidget" name="missionList"/>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="verticalLayoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>520</x>
-      <y>210</y>
-      <width>211</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="inTransit">
-     <item alignment="Qt::AlignHCenter|Qt::AlignTop">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>In Transit</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QListWidget" name="transitList"/>
-     </item>
-    </layout>
-   </widget>
    <widget class="QFrame" name="gridFrame_3">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>59</y>
-      <width>121</width>
-      <height>321</height>
+      <y>60</y>
+      <width>120</width>
+      <height>320</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_3">
@@ -155,6 +67,79 @@
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QTabWidget" name="tabWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>0</y>
+      <width>670</width>
+      <height>430</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="fdTab">
+     <attribute name="title">
+      <string>Flight Deck</string>
+     </attribute>
+     <widget class="QGraphicsView" name="fdView">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>640</width>
+        <height>285</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="hangerTab">
+     <attribute name="title">
+      <string>Hanger</string>
+     </attribute>
+     <widget class="QGraphicsView" name="hangerView">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>560</width>
+        <height>190</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="missionTab">
+     <attribute name="title">
+      <string>On Mission</string>
+     </attribute>
+     <widget class="QListWidget" name="missionList">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>210</width>
+        <height>240</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="transitTab">
+     <attribute name="title">
+      <string>In Transit</string>
+     </attribute>
+     <widget class="QListWidget" name="transitList">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>210</width>
+        <height>240</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -207,7 +192,9 @@
    <addaction name="actionaddAircraft"/>
    <addaction name="actioneditAircraft"/>
    <addaction name="actionremoveAircraft"/>
+   <addaction name="actionrotateAircraft"/>
    <addaction name="actionviewSquadrons"/>
+   <addaction name="actionArrived"/>
   </widget>
   <action name="actionaddAircraft">
    <property name="text">
@@ -227,6 +214,16 @@
   <action name="actionremoveAircraft">
    <property name="text">
     <string>Remove Aircraft</string>
+   </property>
+  </action>
+  <action name="actionrotateAircraft">
+   <property name="text">
+    <string>Rotate Aircraft</string>
+   </property>
+  </action>
+  <action name="actionArrived">
+   <property name="text">
+    <string>Arrived</string>
    </property>
   </action>
  </widget>
@@ -313,18 +310,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>transitList</sender>
-   <signal>itemClicked(QListWidgetItem*)</signal>
+   <sender>actionrotateAircraft</sender>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>setActiveTransit()</slot>
+   <slot>rotateAircraft()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>639</x>
-     <y>419</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>787</x>
-     <y>374</y>
+     <x>399</x>
+     <y>262</y>
     </hint>
    </hints>
   </connection>
@@ -335,12 +332,44 @@
    <slot>setActiveMission()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>651</x>
-     <y>162</y>
+     <x>343</x>
+     <y>267</y>
     </hint>
     <hint type="destinationlabel">
      <x>786</x>
      <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>transitList</sender>
+   <signal>itemClicked(QListWidgetItem*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setActiveTransit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>343</x>
+     <y>364</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>787</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionArrived</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>arrived()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>264</y>
     </hint>
    </hints>
   </connection>
@@ -354,5 +383,8 @@
   <slot>viewSquadrons()</slot>
   <slot>editAircraft()</slot>
   <slot>removeAircraft()</slot>
+  <slot>rotateAircraft()</slot>
+  <slot>setActiveFD()</slot>
+  <slot>arrived()</slot>
  </slots>
 </ui>

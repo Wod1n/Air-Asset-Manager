@@ -63,6 +63,10 @@ void Inventory::editAircraft(int i, bool stowed, int type, int squadron, int fue
   embarkedAircraft.at(i).editAircraft(stowed, type, squadron, fuelLevel);
 }
 
+void Inventory::setAircraftRotation(int index, int rotation){
+  embarkedAircraft.at(index).setRotation(rotation);
+}
+
 void Inventory::removeAircraft(int activeIndex){
   int forDeletion = -1;
   for(int i=0; i<fdlist.size(); i++){
@@ -183,7 +187,7 @@ std::string Inventory::outputData(int selection){
   }
 }
 
-void Inventory::transferAircraft(int aircraftIndex, int initialRegion, int finalRegion){
+void Inventory::transferAircraft(int aircraftIndex, int initialRegion, int finalRegion, int fly, int spot){
 
   int transfer{};
   std::string message{};
@@ -227,6 +231,7 @@ void Inventory::transferAircraft(int aircraftIndex, int initialRegion, int final
 
     case 0:{
       fdlist.push_back(transfer);
+      embarkedAircraft.at(transfer)->setLocation(fly, spot);
       message += "to Flight Deck";
       break;
     }
@@ -257,6 +262,7 @@ void Inventory::setLocation(int region, int index, int left, int top){
   switch (region) {
     case 0:{
       std::cout << "Flight Deck\n";
+      embarkedAircraft.at(index).setLocation(region, left, top);
       break;
     }
 
@@ -286,6 +292,19 @@ Aircraft* Inventory::searchAircraft(std::string searchNumber, int searchRegion){
 */
 int Inventory::searchAircraft(std::string searchNumber, int searchRegion, bool returnRegion){
   switch (searchRegion) {
+
+    case 0:{
+      std::cout << "Searching FD\n";
+      for(int i=0; i < fdlist.size(); i++){
+        if(embarkedAircraft.at(fdlist.at(i)).getNumber() == searchNumber){
+          if(returnRegion){
+            return i;
+          }
+          return fdlist.at(i);
+        }
+      }
+      break;
+    }
     case 1:{
       std::cout << "Searching Hanger\n";
       for(int i=0; i < hangarlist.size(); i++){
@@ -351,6 +370,7 @@ Inventory::Inventory(){
     int imRegion{};
     int imLeft{};
     int imTop{};
+    int imRotation{};
     int imSquadron{};
     bool imStowed{};
     int imFuel{};
@@ -364,10 +384,11 @@ Inventory::Inventory(){
       aircraftFile >> imRegion;
       aircraftFile >> imLeft;
       aircraftFile >> imTop;
+      aircraftFile >> imRotation;
       aircraftFile >> imSquadron;
       aircraftFile >> imStowed;
       aircraftFile >> imFuel;
-      Location* newLocation = new Location(imRegion, imLeft, imTop);
+      Location* newLocation = new Location(imRegion, imLeft, imTop, imRotation);
       Aircraft* new_aircraft = new Aircraft(imType, serialNumber, imSquadron, imStowed, imFuel, *newLocation);
       embarkedAircraft.push_back(*new_aircraft);
 

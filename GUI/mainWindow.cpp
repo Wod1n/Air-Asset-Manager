@@ -3,6 +3,8 @@
 #include <QGraphicsRectItem>
 #include <QGroupBox>
 #include <QGraphicsProxyWidget>
+#include <QImage>
+#include <QPixmap>
 #include <iostream>
 
 #include "mainWindow.h"
@@ -19,10 +21,25 @@ MainWindow::MainWindow(QMainWindow *parent) : QMainWindow(parent){
   embarked = new Inventory;
 
   hangerScene = new QGraphicsScene(this);
+  hangerScene->setSceneRect(0,0,550,180);
+
+  fdScene = new QGraphicsScene(this);
+  fdScene->setSceneRect(0,0,920,260);
+  ui.fdView->setScene(fdScene);
   //hangerScene->setSceneRect(0,0,200,80);
   ui.hangerView->setScene(hangerScene);
-  //ui.hangerView->scale(0.25,0.25);
+  //ui.hangerView->scale(0.7, 0.7);
 
+  QImage hangerbackground("./dependencies/images/hanger.jpg");
+  QBrush backgroundBrush;
+  backgroundBrush.setTextureImage(hangerbackground);
+  hangerScene->setBackgroundBrush(backgroundBrush);
+
+  QImage fdbackground("./dependencies/images/QEFD.jpg");
+  backgroundBrush.setTextureImage(fdbackground);
+  fdScene->setBackgroundBrush(backgroundBrush);
+
+  QObject::connect(fdScene, SIGNAL(selectionChanged()), this, SLOT(setActiveFD()));
   QObject::connect(hangerScene, SIGNAL(selectionChanged()), this, SLOT(setActiveHanger()));
 
   loadInventory();
@@ -35,11 +52,14 @@ void MainWindow::addAircraft(){
   if(dialog->exec()){
     std::cout << "SAVE\n";
     std::cout << dialog->getAircraft()->getDetails() << std::endl;
-    embarked->addAircraft(dialog->getAircraft());
+    Aircraft* newAircraft = dialog->getAircraft();
+    embarked->addAircraft(newAircraft);
+    /*
     std::string serial = dialog->getAircraft()->getNumber();
     int type = dialog->getAircraft()->getTypeCode();
     bool stowed = dialog->getAircraft()->getStowed();
-    addShape(dialog->getLocation(), type, stowed, serial);
+    */
+    addShape(newAircraft);
   }
 
   delete dialog;
@@ -107,7 +127,69 @@ void MainWindow::removeAircraft(){
       return;
     }
   }
+}
 
+void MainWindow::rotateAircraft(){
+  std::cout << "Rotate" << std::endl;
+
+  std::string serial = ui.serialNumber->text().toStdString();
+
+  if(serial == "Serial Number"){
+    std::cout << "No Active Aircraft" << std::endl;
+    return;
+  }
+  int activeIndex = embarked->searchAircraft(serial);
+  int activeRegion = embarked->getAircraft(activeIndex)->getRegionCode();
+
+  switch (activeRegion) {
+    case 0:{
+      std::cout << "Flight Deck" << std::endl;
+      for(int i=1 ; i<fdScene->items().size(); i+=2){
+        if(fdScene->items().at(i)->isSelected()){
+          std::cout << "SELECTED\n";
+          std::cout << fdScene->items().at(i-1)->isWidget() << std::endl;
+          QGraphicsObject* active = fdScene->items().at(i-1)->toGraphicsObject();
+          std::string activeSerial = active->objectName().toStdString();
+          std::cout << activeSerial << std::endl;
+          int aircraftIndex = embarked->searchAircraft(activeSerial, 0, 1);
+          std::cout << fdScene->items().at(i-1)->x() << " " << fdScene->items().at(i-1)->y() << std::endl;
+          fdScene->items().at(i)->setTransformOriginPoint(fdScene->items().at(i-1)->x(), fdScene->items().at(i-1)->y());
+          qreal angle = hangerScene->items().at(i)->rotation();
+          angle += 90;
+          fdScene->items().at(i)->setRotation(angle);
+          embarked->setAircraftRotation(aircraftIndex, angle);
+          return;
+        }
+      }
+      break;
+    }
+
+    case 1:{
+      std::cout << "Hanger" << std::endl;
+      for(int i=1 ; i<hangerScene->items().size(); i+=2){
+        if(hangerScene->items().at(i)->isSelected()){
+          std::cout << "SELECTED\n";
+          std::cout << hangerScene->items().at(i-1)->isWidget() << std::endl;
+          QGraphicsObject* active = hangerScene->items().at(i-1)->toGraphicsObject();
+          std::string activeSerial = active->objectName().toStdString();
+          std::cout << activeSerial << std::endl;
+          int aircraftIndex = embarked->searchAircraft(activeSerial, 1, 1);
+          std::cout << hangerScene->items().at(i-1)->x() << " " << hangerScene->items().at(i-1)->y() << std::endl;
+          hangerScene->items().at(i)->setTransformOriginPoint(hangerScene->items().at(i-1)->x(), hangerScene->items().at(i-1)->y());
+          qreal angle = hangerScene->items().at(i)->rotation();
+          angle += 90;
+          hangerScene->items().at(i)->setRotation(angle);
+          embarked->setAircraftRotation(aircraftIndex, angle);
+          return;
+        }
+      }
+      break;
+    }
+
+    default:{
+      std::cout << "Nothing to rotate" << std::endl;
+    }
+  }
 }
 
 void MainWindow::transferAircraft(){
@@ -136,8 +218,9 @@ void MainWindow::transferAircraft(){
     int activeIndex = embarked->searchAircraft(activeSerial, 2, 1);
 
     embarked->transferAircraft(activeIndex, 2);
+    Aircraft* transitAircraft = embarked->getAircraft(activeIndex);
     delete ui.missionList->selectedItems().takeAt(0);
-    addShape(3, -1, 0, activeSerial);
+    addShape(transitAircraft);
     ui.missionList->clearSelection();
     return;
   }
@@ -149,21 +232,62 @@ void MainWindow::transferAircraft(){
     int activeTransfer = embarked->searchAircraft(activeSerial, 3, 1);
     Aircraft* activeAircraft = embarked->getAircraft(activeIndex);
     int newRegion{};
+    /*
     int type = activeAircraft->getTypeCode();
     bool stowed = activeAircraft->getStowed();
-
+    */
     TransferDialog* dialog = new TransferDialog;
     if(dialog->exec()){
       std::cout << dialog->getNewRegion() << std::endl;
       newRegion = dialog->getNewRegion();
       embarked->transferAircraft(activeTransfer, 3, newRegion);
       delete ui.transitList->selectedItems().takeAt(0);
-      addShape(newRegion, type, stowed, activeSerial);
+      addShape(activeAircraft);
       ui.transitList->clearSelection();
     }
     delete dialog;
     return;
   }
+}
+
+void MainWindow::setActiveFD(){
+  /*
+  std::cout << region << std::endl;
+  switch (region) {
+    case 1:{
+      std::cout << "Active" << std::endl;
+      break;
+    }
+  }
+  */
+  std::cout << "Flight Deck Active" << std::endl;
+
+  //QList<QGraphicsWidget*> allWidgets = hangerScene->findChildren<QGraphicsWidget*>();
+
+  for(int i=0; i<fdScene->items().size(); i++){
+    std::cout << fdScene->items().at(i)->scenePos().x() << " " << fdScene->items().at(i)->scenePos().y() << std::endl;
+    std::cout << fdScene->items().at(i)->isWidget() << std::endl;
+  }
+
+  for(int i=1; i<fdScene->items().size(); i+=2){
+    if(fdScene->items().at(i)->isSelected()){
+      std::cout << "SELECTED\n";
+      std::cout << fdScene->items().at(i-1)->isWidget() << std::endl;
+
+      QGraphicsObject* active = fdScene->items().at(i-1)->toGraphicsObject();
+      std::string activeSerial = active->objectName().toStdString();
+      std::cout << activeSerial << std::endl;
+      int activeIndex = embarked->searchAircraft(activeSerial, 0);
+      Aircraft* activeAircraft = embarked->getAircraft(activeIndex);
+      setActive(activeSerial, activeAircraft->getType(), activeAircraft->getSquadron(), activeAircraft->getFuel());
+      std::cout << fdScene->items().at(i)->scenePos().x() << std::endl;
+      std::cout << fdScene->items().at(i)->scenePos().y() << std::endl;
+      ui.missionList->clearSelection();
+      ui.transitList->clearSelection();
+      return;
+    }
+  }
+  setActive("Serial Number", "Type", "Squadron", 42);
 }
 
 void MainWindow::setActiveHanger(){
@@ -240,17 +364,24 @@ void MainWindow::loadInventory(){
       switch (tempAircraft->getRegionCode()) {
         case 0:{
           std::cout << "Flight Deck\n";
+          int left = tempAircraft->getLeft();
+          int top = tempAircraft->getTop();
+          int rotation = tempAircraft->getRotation();
+          addShape(tempAircraft, left, top, rotation);
           break;
         }
 
         case 1:{
           std::cout << "Hanger\n";
+          /*
           int type = tempAircraft->getTypeCode();
           bool stowed = tempAircraft->getStowed();
           std::string serial = tempAircraft->getNumber();
+          */
           int left = tempAircraft->getLeft();
           int top = tempAircraft->getTop();
-          addShape(1, type, stowed, serial, left, top);
+          int rotation = tempAircraft->getRotation();
+          addShape(tempAircraft, left, top, rotation);
           break;
         }
 
@@ -276,49 +407,71 @@ void MainWindow::loadInventory(){
   }
 }
 
-void MainWindow::addShape(int region, int type, bool stowed, std::string serial, int left, int top){
+void MainWindow::addShape(Aircraft* createdAircraft, int left, int top, int rotation){
   QWidget* newAircraft = new QWidget;
-  std::cout << serial << std::endl;
+  std::cout << createdAircraft->getNumber() << std::endl;
   int tempWidth{};
   int tempHeight{};
-  if(type != -1){
-    tempWidth = embarked->getShape(type)->getWidth(stowed);
-    tempHeight = embarked->getShape(type)->getHeight();
-
+  if(createdAircraft->getTypeCode() != -1){
+    tempWidth = embarked->getShape(createdAircraft->getTypeCode())->getWidth(createdAircraft->getStowed());
+    tempHeight = embarked->getShape(createdAircraft->getTypeCode())->getHeight();
     newAircraft->resize(tempWidth, tempHeight);
     QGroupBox* layout = new QGroupBox(newAircraft);
     layout->resize(tempWidth, tempHeight);
-    layout->setTitle(serial.c_str());
+    layout->setTitle(createdAircraft->getNumber().c_str());
   }
-  switch (region) {
+  std::string imagePath{"./dependencies/images/"};
+  imagePath += createdAircraft->getType();
+  if (createdAircraft->getStowed()) {
+    imagePath += "(S)";
+  }
+  imagePath += ".jpg";
+  QPixmap aircraftimage(imagePath.c_str());
+  QPixmap scaled = aircraftimage.scaled(tempWidth, tempHeight, Qt::IgnoreAspectRatio, Qt::FastTransformation);
+  QLabel* label = new QLabel(newAircraft);
+  label->setPixmap(scaled);
+  switch (createdAircraft->getRegionCode()) {
     case 0:{
-      std::cout << "Flight Deck Graphic\n";
+      QGraphicsWidget* const proxy = fdScene->addWidget(newAircraft);
+      proxy->setFlag(QGraphicsItem::ItemIsMovable, true);
+      proxy->setObjectName(createdAircraft->getNumber().c_str());
+
+      QGraphicsRectItem* const proxyControl = fdScene->addRect(left-5, top-5, tempWidth + 10 , tempHeight + 10, QPen(Qt::black), QBrush(Qt::red));
+      std::cout << left << " " << top << std::endl;
+      proxyControl->setFlag(QGraphicsItem::ItemIsMovable, true);
+      proxyControl->setFlag(QGraphicsItem::ItemIsSelectable, true);
+      proxy->setPos(left, top);
+      proxy->setParentItem(proxyControl);
+      proxyControl->setTransformOriginPoint(proxy->x(), proxy->y());
+      proxyControl->setRotation(rotation);
       break;
     }
 
     case 1:{
       QGraphicsWidget* const proxy = hangerScene->addWidget(newAircraft);
       proxy->setFlag(QGraphicsItem::ItemIsMovable, true);
-      proxy->setObjectName(serial.c_str());
+      proxy->setObjectName(createdAircraft->getNumber().c_str());
 
-      QGraphicsRectItem* const proxyControl = hangerScene->addRect(left, top, tempWidth, 10, QPen(Qt::black), QBrush(Qt::red));
+      QGraphicsRectItem* const proxyControl = hangerScene->addRect(left-5, top-5, tempWidth + 10 , tempHeight + 10, QPen(Qt::black), QBrush(Qt::red));
       std::cout << left << " " << top << std::endl;
       proxyControl->setFlag(QGraphicsItem::ItemIsMovable, true);
       proxyControl->setFlag(QGraphicsItem::ItemIsSelectable, true);
-      proxy->setPos(left, top+proxyControl->rect().height());
+      proxy->setPos(left, top);
       proxy->setParentItem(proxyControl);
+      proxyControl->setTransformOriginPoint(proxy->x(), proxy->y());
+      proxyControl->setRotation(rotation);
       //hangerAircraft.push_back(*proxyControl);
       break;
     }
 
     case 2:{
-      QString missionAircraft = QString::fromUtf8(serial.c_str());
+      QString missionAircraft = QString::fromUtf8(createdAircraft->getNumber().c_str());
       ui.missionList->addItem(missionAircraft);
       break;
     }
 
     case 3:{
-      QString transitAircraft = QString::fromUtf8(serial.c_str());
+      QString transitAircraft = QString::fromUtf8(createdAircraft->getNumber().c_str());
       ui.transitList->addItem(transitAircraft);
       break;
     }
@@ -334,6 +487,10 @@ void MainWindow::setActive(std::string serial, std::string type, std::string squ
   ui.type->setText(QString::fromUtf8(type.c_str()));
   ui.squadron->setText(QString::fromUtf8(squadron.c_str()));
   ui.fuelLevel->setValue(fuel);
+}
+
+void MainWindow::arrived(){
+  std::cout << "Arrived" << '\n';
 }
 
 void MainWindow::viewSquadrons(){
@@ -355,6 +512,21 @@ MainWindow::~MainWindow(){
     std::cout << (i-1)/2 << std::endl;
 
     embarked->setLocation(1, activeIndex, left, top);
+  }
+
+  for(int i=0 ; i<fdScene->items().size(); i+=2){
+    QGraphicsObject* active = fdScene->items().at(i)->toGraphicsObject();
+    std::string activeSerial = active->objectName().toStdString();
+    std::cout << activeSerial << std::endl;
+    int activeIndex = embarked->searchAircraft(activeSerial, 0);
+    std::cout << fdScene->items().at(i)->scenePos().x() << std::endl;
+    std::cout << fdScene->items().at(i)->scenePos().y() << std::endl;
+
+    int left = fdScene->items().at(i)->scenePos().x();
+    int top = fdScene->items().at(i)->scenePos().y();
+    std::cout << (i-1)/2 << std::endl;
+
+    embarked->setLocation(0, activeIndex, left, top);
   }
   delete embarked;
 }

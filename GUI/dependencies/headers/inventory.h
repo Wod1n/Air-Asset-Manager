@@ -15,13 +15,15 @@ class Inventory{
     std::vector<int> transitlist{};
     std::vector<int> onmission{};
     std::vector<std::string> embarkedSquadrons{};
+    std::vector<std::string> squadronColours{};
     std::vector<Shape> diagramShapes;
   public:
     void addAircraft();
     void addAircraft(Aircraft*);
     void editAircraft(int, bool, int, int, int);
+    void setAircraftRotation(int, int);
     void removeAircraft(int);
-    void transferAircraft(int, int, int=3);
+    void transferAircraft(int, int, int=3, int=-1,int=-1);
     void setLocation(int, int, int, int);
     int getACNumber();
     std::string viewSquadrons();

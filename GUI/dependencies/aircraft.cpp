@@ -17,6 +17,10 @@ void Aircraft::setLocation(int region, int left, int top){
   currentLocation.setLocation(region, left, top);
 }
 
+void Aircraft::setRotation(int rotation){
+  currentLocation.setRotation(rotation);
+}
+
 void Aircraft::editAircraft(bool newStowed, int newType, int newSquadron, int newfuelLevel){
   stowed = newStowed;
   type = newType;
@@ -50,6 +54,10 @@ int Aircraft::getLeft(){
 
 int Aircraft::getTop(){
   return currentLocation.getTop();
+}
+
+int Aircraft::getRotation(){
+  return currentLocation.getRotation();
 }
 
 int Aircraft::getFuel(){
